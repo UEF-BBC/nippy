@@ -11,7 +11,7 @@ Comprehensive manual is still being worked on. For a simplified example of how `
 The typical structure of the `nippy` analysis is as follows:
 
 1. Specify the methods you wish to try and the associated parameters by generating an INI-formatted configuration file.
-(for more detailed documentation about writing configuration files please check out the [CONFIGURATION.md](./blob/master/CONFIGURATION.md) document). For example, configuring `nippy` to test 2nd derivative Savitzky-Golay filtering (with 3rd order polynomial fit) at three different filter-lengths (7, 11 and 31 samples) can be accomplished by adding the following section to the configuration file.
+(for more detailed documentation about writing configuration files please check out the [CONFIGURATION.md](CONFIGURATION.md)). For example, configuring `nippy` to test 2nd derivative Savitzky-Golay filtering (with 3rd order polynomial fit) at three different filter-lengths (7, 11 and 31 samples) can be accomplished by adding the following section to the configuration file.
 
 ```ini
 [SAVGOL]
