@@ -82,7 +82,6 @@ def norml(spectra, udefined=True, imin=0, imax=1):
         udefined <bool>: use user defined limits
         imin <float>: user defined minimum
         imax <float>: user defined maximum
-        spectra <numpy.ndarray>: NIRS data matrix.
 
     Returns:
         spectra <numpy.ndarray>: Normalized NIR spectra
