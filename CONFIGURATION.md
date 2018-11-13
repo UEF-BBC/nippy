@@ -1,6 +1,10 @@
-Here you can find the syntax and a list of parameters for the different preprocessing operations currently included in `nippy`. Additional documentation can be found in the source code docstrings.
+# CONFIGURATION: How to write the configuration file?
 
-Configuration files follow the INI-format. Each preprocessing option is entered into the configuration file as a section and the iterable parameters for that method are given as key-value pairs. Description of each preprocessing method and related parameters are given below.
+_(Last updated: 14.11.2018)_
+
+Here you can find the syntax and a list of parameters for the different preprocessing operations currently included in `nippy`. Additional documentation can be found in the source code comments and docstrings.
+
+Configuration files in `nippy` use the venerable [INI-format](https://en.wikipedia.org/wiki/INI_file). Each preprocessing option is entered into the configuration file as a section and the iterable parameters for that method are given as key-value pairs. Description of each preprocessing method and related parameters are given below.
 
 **Note:** In addition to method specific parameters, each preprocessing steps accepts `also_skip` parameter. `also_skip` is a boolean which generates an additional pipeline where the method in question is left out.
 
@@ -85,6 +89,14 @@ Available parameters are:
 - `snv_type`: Type of normal variate to use. Options are `snv` for _standard normal variate_ and `rnv` for _robust normal variate_.
 - `iqr`: In the case of `rnv`, this parameter can be used to define the inter-quartile range used for normalization. Defaults to `[75, 25]`.
 
+Example: Three pipelines, two with scatter correction (standard and robust) and one without (by utilizing the `also_skip` option).
+
+```ini
+[SNV]
+    snv_type = snv, rnv
+    also_skip = True
+```
+
 ## MSC
 Performs multiplicative scatter correction to the mean of spectrum.
 
@@ -92,12 +104,38 @@ Available parameters are:
 
 - No configurable parameters
 
+Example: Two pipelines, with and without MSC.
+
+```ini
+[MSC]
+    also_skip = True
+```
+
 ## DETREND
-Performs detrending on the spectrum.
+Performs linear detrending on the spectrum.
 
 Available parameters are:
+
+- `bp`: A sequence of break points. If given, an individual linear fit is performed for each part of data between two break points. Break points are specified as indices into data.
+
+Example: Two pipelines, with and without detrending.
+
+```ini
+[DETREND]
+    also_skip = True
+```
 
 ## NORML
 Performs normalization on the spectrum.
 
 Available parameters are:
+- `udefined`: use user defined limits
+- `imin`: user defined minimum
+- `imax`: user defined maximum
+
+Example: Two pipelines, with and without normalization.
+
+```ini
+[NORML]
+    also_skip = True
+```
