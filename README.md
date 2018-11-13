@@ -6,15 +6,12 @@ Semi-automated preprocessing Python module for near infrared spectroscopic (NIRS
 `nippy` is a Python (3.6+) module for rapid exploration of different NIRS preprocessing methods. `nippy` collects and wraps the most common preprocessing methods and provides tools for quickly constructing preprocessing pipes with alternative preprocessing combinations. Aim of this module is to enable the user to quickly test multiple alternativ preprocessing techniques and test how that affects the performance of the NIRS model.
 
 ## Usage
-(to see how to install the module, plase see the *Installation* section)
-
 Comprehensive manual is still being worked on. For a simplified example of how `nippy` works you can look into the _examples_ directory. We provide here a crash-course into how `nippy` can be used.
 
 The typical structure of the `nippy` analysis is as follows:
 
 1. Specify the methods you wish to try and the associated parameters by generating an INI-formatted configuration file.
-
-For example, configuring `nippy` to test 2nd derivative Savitzky-Golay filtering (with 3rd order polynomial fit) at three different filter-lengths (7, 11 and 31 samples) can be accomplished by adding the following section to the configuration file.
+(for more detailed documentation about writing configuration files please check out the [CONFIGURATION.md](../blob/master/CONFIGURATION.md) document). For example, configuring `nippy` to test 2nd derivative Savitzky-Golay filtering (with 3rd order polynomial fit) at three different filter-lengths (7, 11 and 31 samples) can be accomplished by adding the following section to the configuration file.
 
 ```ini
 [SAVGOL]
