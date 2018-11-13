@@ -12,7 +12,7 @@ Available parameters are:
 - `threshold`: Values in the spectra that exceed this parameter value are either rejected or subsituted depending on the value of the `substitute` parameter.
 - `substitute`: This parameter determines what is done to the spectral values that exceed the `threshold` paramater. If substitute is `None`, the values are simply removed from the spectrum. If the parameter is a float, the exceeding values are subsituted with this value.
 
-Example
+Example: Single pipeline where spurious spectral values exceeding 1e10 are removed and subsituted with zeroes.
 ```ini
 [CLIP]
     threshold: 1e10
@@ -20,30 +20,30 @@ Example
 ```
 
 ## TRIM
-Removes unwanted wavelength ranges form the spectrum. 
+Removes unwanted wavelength ranges form the spectrum. The kept wavelength range can consist of one or several continuous ranges.
 
 Available parameters are:
 
 - `bins`: Determines the wavelength region (or regions) to use in the analysis. Single continuous wavelength region is specified by giving the starting and ending wavelength separated by a hyphen (`-`). The total wavelength region can consist of multiple continuous regions, different regions are separted with a comma (`,`). Finally, the delimiter for different pipelines is semicolon (`;`).
 
-Example with a single pipeline with a single wavelength range (1000-1900nm)
+Example: single pipeline which removes everything outside of a specified wavelength range (1000-1900nm)
 ```ini
 [TRIM]
     bins = 1000-1900
 ```
-Example with a single pipeline with a two wavelength ranges (1000-1500nm and 1900-2200nm)
+Example: single pipeline with a two wavelength ranges (1000-1500nm and 1900-2200nm)
 ```ini
 [TRIM]
     bins = 1000-1500, 1900-2200
 ```
-Example with two pipelines. One with a single wavelength range (700-1800nm) and one with a two wavelength ranges (1000-1500nm and 1900-2200nm)
+Example: two pipelines. Pipeline 1 has a single wavelength range (700-1800nm) and pipeline 2  has two wavelength ranges (1000-1500nm and 1900-2200nm)
 ```ini
 [TRIM]
     bins = 700-1800; 1000-1500, 1900-2200
 ```
 
 ## SAVGOL
-Performs Savitzky-Golay filtering on the spectrum.
+Performs Savitzky-Golay [Savitzky-Golay](https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter) filtering on the spectrum.
 
 Available parameters are:
 
@@ -51,15 +51,31 @@ Available parameters are:
 - `poly_order`: Order of the polynomial approximation in the filtering process. Defaults to 3.
 - `deriv_order`: Savitzky-Golay filtering can also return the smooth derivate of the spectrum. This parameter determines the order of the derivate. Defaults to 0 (i.e., no derivate).
 
+Example: Produces six pipelines with two filter window sizes (31 and 61) performed for the original, 1st derivative and 2nd derivative of the spectrum.
+
+```ini
+[SAVGOL]
+    filter_win = 31, 61
+    poly_order = 3
+    deriv_order = 0, 1, 2
+```
 
 ## SMOOTH
-Smooth filtering of the spectrum.
+Smoothing spectrum via convolution according to a specific filter window length and windowing function.
 
 Available parameters are:
 
 - `filter_win`: Length of the filtering window in samples.
 - `window_type`: Windowing function to use in the filtering (see for options see `scipy.signal.windows`). Defaults to `flat`.
 - `mode`: How to treat the edges of the spectrum during filtering. Defaults to `'reflect'`
+
+Example: Three pipelines, each with a different filtering window length (31, 61, and 91).
+
+```ini
+[SMOOTH]
+    filter_win = 31, 61, 91
+    window_type = hamming
+```
 
 ## SNV
 Performs standard (or robust) normal variate on the spectrum.
