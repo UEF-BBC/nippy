@@ -33,7 +33,7 @@ The typical structure of the `nippy` analysis is as follows:
 
 ```python
     import nippy
-    pipelines = nippy.read_pipeline('example_protocol.ini')
+    pipelines = nippy.read_configuration('example_protocol.ini')
 ```
 
 4. `nippy` generates a list of all possible preprocessing permutation. Pass your data and the list of pipelines to the `nippy`-function.
