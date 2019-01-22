@@ -74,6 +74,24 @@ def trim(wavelength, spectra, bins):
     return wavelength_trim, spectra_trim
 
 
+def resample(wavelength, spectra, resampling_ratio):
+    """ Resample spectra according to the resampling ratio.
+
+    Args:
+        wavelength <numpy.ndarray>: Vector of wavelengths.
+        spectra <numpy.ndarray>: NIRS data matrix.
+        resampling_ratio <float>: new length with respect to original length
+
+    Returns:
+        wavelength_ <numpy.ndarray>: Resampled wavelengths.
+        spectra_ <numpy.ndarray>: Resampled NIR spectra
+    """
+
+    new_length = int(np.round(wavelength.size * resampling_ratio))
+    spectra_, wavelength_ = scipy.signal.resample(spectra, new_length, wavelength)
+    return wavelength_, spectra_
+
+
 def norml(spectra, udefined=True, imin=0, imax=1):
     """ Perform spectral normalisation with user-defined limits.
 
@@ -274,14 +292,17 @@ def nippy(wavelength, spectra, pipelines):
         if 'SMOOTH' in pipeline.keys() and pipeline['SMOOTH'] != None:
             spectra_ = smooth(spectra_, **pipeline['SMOOTH'])
 
-        if 'TRIM' in pipeline.keys() and pipeline['TRIM'] != None:
-            wavelength_, spectra_ = trim(wavelength_, spectra_, **pipeline['TRIM'])
-
         if 'NORML' in pipeline.keys() and pipeline['NORML'] != None:
             spectra_ = norml(spectra_, **pipeline['NORML'])
 
         if 'DETREND' in pipeline.keys() and pipeline['DETREND'] != None:
             spectra_ = detrend(spectra_, **pipeline['DETREND'])
+
+        if 'RESAMPLE' in pipeline.keys() and pipeline['RESAMPLE'] != None:
+            wavelength_, spectra_ = resample(wavelength_, spectra_, **pipeline['RESAMPLE'])
+
+        if 'TRIM' in pipeline.keys() and pipeline['TRIM'] != None:
+            wavelength_, spectra_ = trim(wavelength_, spectra_, **pipeline['TRIM'])
 
         datasets.append((wavelength_, spectra_))
     return datasets

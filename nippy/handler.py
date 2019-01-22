@@ -23,6 +23,21 @@ def parse_savgol(config):
     return config
 
 
+def parse_resample(config):
+    """ Parse arguments for Savitzky-Golay filtering.
+
+    Args:
+        config <dict>: dictionary of configuration options for resample.
+    Returns:
+        config <dict>: dictionary of configuration options with parsed values.
+
+    """
+    for key in config:
+        config[key] = _parse_list(config[key], dtype=float)
+
+    return config
+
+
 def parse_norml(config):
     """ Parse arguments for Normalization.
 
@@ -201,6 +216,8 @@ def parse_section(config, config_type):
         config = parse_clip(config)
     elif config_type == 'SMOOTH':
         config = parse_smooth(config)
+    elif config_type == 'RESAMPLE':
+        config = parse_resample(config)
     else:
         raise TypeError('Preprocessing option "{}" not recognized!'.format(config_type))
 
@@ -302,7 +319,7 @@ def read_configuration(file_path):
 
     # Parse predefined configuration sections
     config = {}
-    for part in ['SAVGOL', 'TRIM', 'SNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH']:
+    for part in ['SAVGOL', 'TRIM', 'SNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
         if part in parser:
             config[part] = parse_section(dict(parser[part]), part)
 
