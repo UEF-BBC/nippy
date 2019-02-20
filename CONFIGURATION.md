@@ -54,6 +54,7 @@ Available parameters are:
 - `filter_win`: Length of the filtering window in samples.
 - `poly_order`: Order of the polynomial approximation in the filtering process. Defaults to 3.
 - `deriv_order`: Savitzky-Golay filtering can also return the smooth derivate of the spectrum. This parameter determines the order of the derivate. Defaults to 0 (i.e., no derivate).
+- `delta`: Spacing used when calculating derivates. Defaults to 1.
 
 Example: Produces six pipelines with two filter window sizes (31 and 61) performed for the original, 1st derivative and 2nd derivative of the spectrum.
 
