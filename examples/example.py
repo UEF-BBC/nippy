@@ -1,7 +1,7 @@
-# A simple example of semi-automic preprocessing of NIR data using NIRPREP.
+# A simple example of semi-automic preprocessing of NIR data using nippy.
 #
 # jtorniainen // UEF
-# 2018, MIT License
+# 2019, MIT License
 
 import nippy
 import numpy as np
