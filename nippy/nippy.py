@@ -66,7 +66,7 @@ def snv(spectra, snv_type='snv', iqr=[75, 25]):
         return (spectra - np.mean(spectra, axis=0)) / np.std(spectra, axis=0)
 
 
-def savgol(spectra, filter_win=11, poly_order=3, deriv_order=0):
+def savgol(spectra, filter_win=11, poly_order=3, deriv_order=0, delta=1.0):
     """ Perform Savitzky–Golay filtering on the data (also calculates derivatives). This function is a wrapper for
     scipy.signal.savgol_filter.
 
@@ -79,7 +79,7 @@ def savgol(spectra, filter_win=11, poly_order=3, deriv_order=0):
     Returns:
         spectra <numpy.ndarray>: NIRS data smoothed with Savitzky-Golay filtering
     """
-    return scipy.signal.savgol_filter(spectra, filter_win, poly_order, deriv_order, axis=0)
+    return scipy.signal.savgol_filter(spectra, filter_win, poly_order, deriv_order, delta=delta, axis=0)
 
 
 def trim(wavelength, spectra, bins):
