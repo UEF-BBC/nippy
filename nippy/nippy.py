@@ -31,7 +31,7 @@ class Preprocessor(object):
             raise StopIteration
         else:
             wavelength_, spectra_ = run_pipeline(self.wavelength.copy(),
-                                                 self.nir.copy(),
+                                                 self.spectra.copy(),
                                                  self.configuration[self.current_pipe_idx])
 
             return wavelength_, spectra_, self.configuration[self.current_pipe_idx]
