@@ -33,7 +33,7 @@ class Preprocessor(object):
             wavelength_, spectra_ = run_pipeline(self.wavelength.copy(),
                                                  self.spectra.copy(),
                                                  self.configuration[self.current_pipe_idx])
-
+            self.current_pipe_idx += 1
             return wavelength_, spectra_, self.configuration[self.current_pipe_idx]
 
 
