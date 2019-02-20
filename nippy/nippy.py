@@ -19,12 +19,12 @@ class Preprocessor(object):
     """ Preprocessor object can be used to run nippy as an iterator (see documentation for examples). """
 
     def __init__(self, wavelength, spectra, configuration_file):
-    """
-    Args:
-        wavelength <numpy.ndarray>: Vector of wavelengths.
-        spectra <numpy.ndarray>: NIRS data matrix.
-        configuration_file <str>: A path to the configuration file.
-    """
+        """
+        Args:
+            wavelength <numpy.ndarray>: Vector of wavelengths.
+            spectra <numpy.ndarray>: NIRS data matrix.
+            configuration_file <str>: A path to the configuration file.
+        """
         self.wavelength = wavelength
         self.spectra = spectra
         self.configuration = handler.read_configuration(configuration_file)
