@@ -16,8 +16,15 @@ import os
 
 
 class Preprocessor(object):
+    """ Preprocessor object can be used to run nippy as an iterator (see documentation for examples). """
 
     def __init__(self, wavelength, spectra, configuration_file):
+    """
+    Args:
+        wavelength <numpy.ndarray>: Vector of wavelengths.
+        spectra <numpy.ndarray>: NIRS data matrix.
+        configuration_file <str>: A path to the configuration file.
+    """
         self.wavelength = wavelength
         self.spectra = spectra
         self.configuration = handler.read_configuration(configuration_file)
@@ -27,14 +34,16 @@ class Preprocessor(object):
         return self
 
     def __next__(self):
+        """ Returns the next preprocessed dataset and a summary of preprocessing operations. """
         if self.current_pipe_idx > len(self.configuration):
             raise StopIteration
         else:
+            this_idx = self.current_pipe_idx
             wavelength_, spectra_ = run_pipeline(self.wavelength.copy(),
                                                  self.spectra.copy(),
-                                                 self.configuration[self.current_pipe_idx])
+                                                 self.configuration[this_idx])
             self.current_pipe_idx += 1
-            return wavelength_, spectra_, self.configuration[self.current_pipe_idx]
+            return wavelength_, spectra_, self.configuration[this_idx]
 
 
 # PREPROCESSING FUNCTIONS
