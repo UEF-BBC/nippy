@@ -15,6 +15,28 @@ import pickle
 import os
 
 
+class Preprocessor(object):
+
+    def __init__(self, wavelength, spectra, configuration_file):
+        self.wavelength = wavelength
+        self.spectra = spectra
+        self.configuration = handler.read_configuration(configuration_file)
+        self.current_pipe_idx = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.current_pipe_idx > len(self.configuration):
+            raise StopIteration
+        else:
+            wavelength_, spectra_ = run_pipeline(self.wavelength.copy(),
+                                                 self.nir.copy(),
+                                                 self.configuration[self.current_pipe_idx])
+
+            return wavelength_, spectra_, self.configuration[self.current_pipe_idx]
+
+
 # PREPROCESSING FUNCTIONS
 def snv(spectra, snv_type='snv', iqr=[75, 25]):
     """ Perform scatter correction using the standard or robust normal variate.
@@ -259,7 +281,39 @@ def export_pipelines_to_pickle(filename, datasets, pipelines):
     pickle.dump(data, open(filename, 'wb'))
 
 
-def nippy(wavelength, spectra, pipelines):
+def run_pipeline(wavelength_, spectra_, pipeline):
+
+        if 'CLIP' in pipeline.keys() and pipeline['CLIP'] != None:
+            wavelength_, spectra_ = clip(wavelength_, spectra_, **pipeline['CLIP'])
+
+        if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
+            spectra_ = snv(spectra_, **pipeline['SNV'])
+
+        if 'MSC' in pipeline.keys() and pipeline['MSC'] != None:
+            spectra_ = msc(spectra_)
+
+        if 'SAVGOL' in pipeline.keys() and pipeline['SAVGOL'] != None:
+            spectra_ = savgol(spectra_, **pipeline['SAVGOL'])
+
+        if 'SMOOTH' in pipeline.keys() and pipeline['SMOOTH'] != None:
+            spectra_ = smooth(spectra_, **pipeline['SMOOTH'])
+
+        if 'NORML' in pipeline.keys() and pipeline['NORML'] != None:
+            spectra_ = norml(spectra_, **pipeline['NORML'])
+
+        if 'DETREND' in pipeline.keys() and pipeline['DETREND'] != None:
+            spectra_ = detrend(spectra_, **pipeline['DETREND'])
+
+        if 'RESAMPLE' in pipeline.keys() and pipeline['RESAMPLE'] != None:
+            wavelength_, spectra_ = resample(wavelength_, spectra_, **pipeline['RESAMPLE'])
+
+        if 'TRIM' in pipeline.keys() and pipeline['TRIM'] != None:
+            wavelength_, spectra_ = trim(wavelength_, spectra_, **pipeline['TRIM'])
+
+        return wavelength_, spectra_
+
+
+def nippy(wavelength, spectra, pipelines):  # TODO: Start using run_pipeline once its confirmed it works.
     """ Main processing script of nippy. Applies operations specified in the 'pipelines' parameter to the given spectra.
 
     Args:
