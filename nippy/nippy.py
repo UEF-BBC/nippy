@@ -35,7 +35,7 @@ class Preprocessor(object):
 
     def __next__(self):
         """ Returns the next preprocessed dataset and a summary of preprocessing operations. """
-        if self.current_pipe_idx > len(self.configuration):
+        if self.current_pipe_idx >= len(self.configuration):
             raise StopIteration
         else:
             this_idx = self.current_pipe_idx
