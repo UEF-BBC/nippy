@@ -232,6 +232,21 @@ def smooth(spectra, filter_win, window_type='flat', mode='reflect'):
     return spectra
 
 
+def derivate(spectra, order, delta):
+    """ Computes Nth order derivates with the desired spacing using numpy.gradient.
+    Args:
+        spectra <numpy.ndarray>: NIRS data matrix.
+        order <float>: Order of the derivation.
+        delta <int>: Delta of the derivate (in samples).
+
+    Returns:
+        spectra <numpy.ndarray>: Derivated NIR spectra.
+    """
+    for n in range(order):
+        spectra = np.gradient(spectra, delta, axis=0)
+    return spectra
+
+
 # UTILITY FUNCTIONS
 def export_pipelines_to_csv(output_path, datasets, pipelines, mkdir=False):
     """ Exports all datasets and the related pipelines to csv files.
@@ -301,14 +316,17 @@ def run_pipeline(wavelength_, spectra_, pipeline):
         if 'MSC' in pipeline.keys() and pipeline['MSC'] != None:
             spectra_ = msc(spectra_)
 
+        if 'NORML' in pipeline.keys() and pipeline['NORML'] != None:
+            spectra_ = norml(spectra_, **pipeline['NORML'])
+
         if 'SAVGOL' in pipeline.keys() and pipeline['SAVGOL'] != None:
             spectra_ = savgol(spectra_, **pipeline['SAVGOL'])
 
         if 'SMOOTH' in pipeline.keys() and pipeline['SMOOTH'] != None:
             spectra_ = smooth(spectra_, **pipeline['SMOOTH'])
 
-        if 'NORML' in pipeline.keys() and pipeline['NORML'] != None:
-            spectra_ = norml(spectra_, **pipeline['NORML'])
+        if 'DERIVATE' in pipeline.keys() and pipeline['DERIVATE'] != None:
+            wavelength_, spectra_ = derivate(spectra_, **pipeline['DERIVATE'])
 
         if 'DETREND' in pipeline.keys() and pipeline['DETREND'] != None:
             spectra_ = detrend(spectra_, **pipeline['DETREND'])
@@ -318,6 +336,7 @@ def run_pipeline(wavelength_, spectra_, pipeline):
 
         if 'TRIM' in pipeline.keys() and pipeline['TRIM'] != None:
             wavelength_, spectra_ = trim(wavelength_, spectra_, **pipeline['TRIM'])
+
 
         return wavelength_, spectra_
 
