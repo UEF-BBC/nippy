@@ -108,6 +108,25 @@ def parse_detrend(config):
     return config
 
 
+def parse_derivate(config):
+    """ Parse arguments for N-th order derivation.
+
+    Args:
+        config <dict>: dictionary of configuration options for derivate.
+    Returns:
+        config <dict>: dictionary of configuration options with parsed values.
+
+    """
+
+    if 'order' in config.keys():
+        config['order'] = _parse_list(config['order'], dtype=int)
+
+    if 'delta' in config.keys():
+        config['delta'] = _parse_list(config['delta'], dtype=int)
+
+    return config
+
+
 def parse_smooth(config):
     """ Parse arguments for moving average filtering.
 
