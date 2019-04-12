@@ -232,7 +232,7 @@ def smooth(spectra, filter_win, window_type='flat', mode='reflect'):
     return spectra
 
 
-def derivate(spectra, order, delta):
+def derivate(spectra, order=1, delta=1):
     """ Computes Nth order derivates with the desired spacing using numpy.gradient.
     Args:
         spectra <numpy.ndarray>: NIRS data matrix.
