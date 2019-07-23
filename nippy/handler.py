@@ -102,6 +102,22 @@ def parse_snv(config):
     return config
 
 
+def parse_lsnv(config):
+    """ Parse arguments for standard normal variate scatter correction.
+
+    Args:
+        config <dict>: dictionary of configuration options for snv.
+    Returns:
+        config <dict>: dictionary of configuration options with parsed values.
+
+    """
+    config['snv_type'] = _parse_list(config['snv_type'], dtype=str)
+    config['num_windows'] = _parse_list(config['num_windows'], dtype=int)
+    if 'iqr' in config.keys():
+        config['iqr'] = _parse_list_of_lists(config['iqr'])
+    return config
+
+
 def parse_detrend(config):
     config['bp'] = _parse_list_of_lists(config['bp'], dtype=int)
 
@@ -204,6 +220,8 @@ def parse_section(config, config_type):
         config = parse_savgol(config)
     elif config_type == 'SNV':
         config = parse_snv(config)
+    elif config_type == 'LSNV':
+        config = parse_lsnv(config)
     elif config_type == 'TRIM':
         config = parse_trim(config)
     elif config_type == 'DETREND':
@@ -319,7 +337,7 @@ def read_configuration(file_path):
 
     # Parse predefined configuration sections
     config = {}
-    for part in ['SAVGOL', 'TRIM', 'SNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
+    for part in ['SAVGOL', 'TRIM', 'SNV', 'LSNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
         if part in parser:
             config[part] = parse_section(dict(parser[part]), part)
 
