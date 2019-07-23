@@ -112,7 +112,8 @@ def parse_lsnv(config):
 
     """
     config['snv_type'] = _parse_list(config['snv_type'], dtype=str)
-    config['num_windows'] = _parse_list(config['num_windows'], dtype=int)
+    if 'num_windows' in config.keys():
+        config['num_windows'] = _parse_list(config['num_windows'], dtype=int)
     if 'iqr' in config.keys():
         config['iqr'] = _parse_list_of_lists(config['iqr'])
     return config
@@ -304,7 +305,7 @@ def remove_incompatible_operations(pipelines):
         return is_problem
 
     # Remove illegal combinations
-    bad_pairs = [('MSC', 'SNV'), ('SMOOTH', 'SAVGOL')]
+    bad_pairs = [('MSC', 'SNV'), ('SMOOTH', 'SAVGOL'), ('LSNV', 'SNV'), ('MSC', 'LSNV')]
     bad_idx = []
     new_pipes = []
     for bad_pair in bad_pairs:
