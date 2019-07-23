@@ -318,6 +318,9 @@ def run_pipeline(wavelength_, spectra_, pipeline):
         if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
             spectra_ = snv(spectra_, **pipeline['SNV'])
 
+        if 'LSNV' in pipeline.keys() and pipeline['LSNV'] != None:
+            spectra_ = lsnv(spectra_, **pipeline['LSNV'])
+
         if 'MSC' in pipeline.keys() and pipeline['MSC'] != None:
             spectra_ = msc(spectra_)
 
