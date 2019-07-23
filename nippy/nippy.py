@@ -79,9 +79,9 @@ def lsnv(spectra, snv_type='snv', num_windows=10, iqr=[75, 25]):
         spectra <numpy.ndarray>: NIRS data with local (S/R)NV applied.
     """
 
-    parts = np.split(spectra, num_windows, axis=0)
+    parts = np.array_split(spectra, num_windows, axis=0)
     for idx, part in enumerate(parts):
-        parts[idx] = snv(part, snv_type=snv_type, iqr=iqr)
+        parts[idx] = snv(part, snv_type=snv_type, iqr=iqr)
 
     return np.concatenate(parts, axis=0)
 
