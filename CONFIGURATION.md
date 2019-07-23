@@ -98,6 +98,23 @@ Example: Three pipelines, two with scatter correction (standard and robust) and 
     also_skip = True
 ```
 
+## LSNV
+Performs local standard (or robust) normal variate on the spectrum. Instead of performing the opration over the entire spectrum, the local (S/R)NV variant performs scatter correction in equispaced non-overlapping windows (as specified by the `num_windows` parameter).
+
+Available parameters are:
+
+- `snv_type`: Type of normal variate to use. Options are `snv` for _standard normal variate_ and `rnv` for _robust normal variate_.
+- `num_windows`: Number of windows to split the spectrum to (defaults to `10`)
+- `iqr`: In the case of `rnv`, this parameter can be used to define the inter-quartile range used for normalization. Defaults to `[75, 25]`.
+
+Example: Three pipelines, two with scatter correction (standard and robust) and one without (by utilizing the `also_skip` option).
+
+```ini
+[SNV]
+    snv_type = snv, rnv
+    num_windows = 3, 6
+    also_skip = True
+
 ## MSC
 Performs multiplicative scatter correction to the mean of spectrum.
 
