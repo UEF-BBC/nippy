@@ -66,6 +66,26 @@ def snv(spectra, snv_type='snv', iqr=[75, 25]):
         return (spectra - np.mean(spectra, axis=0)) / np.std(spectra, axis=0)
 
 
+def lsnv(spectra, snv_type='snv', num_windows=10, iqr=[75, 25]):
+    """ Perform local scatter correction using the standard or robust normal variate.
+
+    Args:
+        spectra <numpy.ndarray>: NIRS data matrix.
+        snv_type <str>: Which SNV method to use ('snv' for standard, 'rnv' for robust).
+        num_windows <int>: number of equispaced windows to use (window size (in points) is length / num_windows)
+        iqr <list>: IQR ranges [lower, upper] for robust normal variate.
+
+    Returns:
+        spectra <numpy.ndarray>: NIRS data with local (S/R)NV applied.
+    """
+
+    parts = np.array_split(spectra, num_windows, axis=0)
+    for idx, part in enumerate(parts):
+        parts[idx] = snv(part, snv_type=snv_type, iqr=iqr)
+
+    return np.concatenate(parts, axis=0)
+
+
 def savgol(spectra, filter_win=11, poly_order=3, deriv_order=0, delta=1.0):
     """ Perform Savitzky–Golay filtering on the data (also calculates derivatives). This function is a wrapper for
     scipy.signal.savgol_filter.
@@ -312,6 +332,9 @@ def run_pipeline(wavelength_, spectra_, pipeline):
 
         if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
             spectra_ = snv(spectra_, **pipeline['SNV'])
+
+        if 'LSNV' in pipeline.keys() and pipeline['LSNV'] != None:
+            spectra_ = lsnv(spectra_, **pipeline['LSNV'])
 
         if 'MSC' in pipeline.keys() and pipeline['MSC'] != None:
             spectra_ = msc(spectra_)
