@@ -87,7 +87,8 @@ def parse_trim(config):
     return config
 
 
-def parse_snv(config):
+
+def parse_rnv(config):
     """ Parse arguments for standard normal variate scatter correction.
 
     Args:
@@ -96,7 +97,7 @@ def parse_snv(config):
         config <dict>: dictionary of configuration options with parsed values.
 
     """
-    config['snv_type'] = _parse_list(config['snv_type'], dtype=str)
+
     if 'iqr' in config.keys():
         config['iqr'] = _parse_list_of_lists(config['iqr'])
     return config
@@ -111,11 +112,8 @@ def parse_lsnv(config):
         config <dict>: dictionary of configuration options with parsed values.
 
     """
-    config['snv_type'] = _parse_list(config['snv_type'], dtype=str)
     if 'num_windows' in config.keys():
         config['num_windows'] = _parse_list(config['num_windows'], dtype=int)
-    if 'iqr' in config.keys():
-        config['iqr'] = _parse_list_of_lists(config['iqr'])
     return config
 
 
@@ -239,7 +237,9 @@ def parse_section(config, config_type):
     if config_type == 'SAVGOL':
         config = parse_savgol(config)
     elif config_type == 'SNV':
-        config = parse_snv(config)
+        config = {}
+    elif config_type == 'RNV':
+        config = parse_rnv(config)
     elif config_type == 'LSNV':
         config = parse_lsnv(config)
     elif config_type == 'TRIM':
@@ -324,7 +324,8 @@ def remove_incompatible_operations(pipelines):
         return is_problem
 
     # Remove illegal combinations
-    bad_pairs = [('MSC', 'SNV'), ('SMOOTH', 'SAVGOL'), ('LSNV', 'SNV'), ('MSC', 'LSNV')]
+    # FIXME: Come up with a smarter system for checking illegal pairs
+    bad_pairs = [('MSC', 'SNV'), ('MSC', 'RNV'), ('SNV', 'RNV'), ('SMOOTH', 'SAVGOL'), ('LSNV', 'SNV'), ('MSC', 'LSNV'), ('RNV', 'LSNV')]
     bad_idx = []
     new_pipes = []
     for bad_pair in bad_pairs:
@@ -357,7 +358,7 @@ def read_configuration(file_path):
 
     # Parse predefined configuration sections
     config = {}
-    for part in ['SAVGOL', 'TRIM', 'SNV', 'LSNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
+    for part in ['SAVGOL', 'TRIM', 'SNV', 'RNV', 'LSNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
         if part in parser:
             config[part] = parse_section(dict(parser[part]), part)
 
