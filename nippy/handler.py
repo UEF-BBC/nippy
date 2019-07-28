@@ -325,7 +325,13 @@ def remove_incompatible_operations(pipelines):
 
     # Remove illegal combinations
     # FIXME: Come up with a smarter system for checking illegal pairs
-    bad_pairs = [('MSC', 'SNV'), ('MSC', 'RNV'), ('SNV', 'RNV'), ('SMOOTH', 'SAVGOL'), ('LSNV', 'SNV'), ('MSC', 'LSNV'), ('RNV', 'LSNV')]
+    bad_pairs = [('MSC', 'SNV'),
+                 ('MSC', 'RNV'),
+                 ('MSC', 'LSNV'),
+                 ('LSNV', 'SNV'),
+                 ('LSNV', 'RNV'),
+                 ('SNV', 'RNV'),
+                 ('SMOOTH', 'SAVGOL')]
     bad_idx = []
     new_pipes = []
     for bad_pair in bad_pairs:
