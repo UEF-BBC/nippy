@@ -313,40 +313,35 @@ def remove_incompatible_operations(pipelines):
                     return idx
         return -1
 
-    def check_pair(arg1, arg2, pipe):
-        if arg1 in pipe.keys() and arg2 in pipe.keys(): # Might be a problem
-            if pipe[arg1] == None or pipe[arg2] == None: # Not a problem
-                is_problem = False
-            else:  # Is a problem
-                is_problem = True
-        else:  # Not a problem
-            is_problem = False
-        return is_problem
 
-    # Remove illegal combinations
-    # FIXME: Come up with a smarter system for checking illegal pairs
-    bad_pairs = [('MSC', 'SNV'),
-                 ('MSC', 'RNV'),
-                 ('MSC', 'LSNV'),
-                 ('LSNV', 'SNV'),
-                 ('LSNV', 'RNV'),
-                 ('SNV', 'RNV'),
-                 ('SMOOTH', 'SAVGOL')]
-    bad_idx = []
-    new_pipes = []
-    for bad_pair in bad_pairs:
-        a, b = bad_pair
+    def _remove_illegal_combination(pipelines, combination):
+        illegal_pipes = []
+        pipelines_ = []
         for idx, pipeline in enumerate(pipelines):
-            if check_pair(a, b, pipeline):
-                pipeline_b = pipeline.copy()
-                pipeline[a] = None
-                pipeline_b[b] = None
-                new_pipes.append(pipeline_b)
+            combination_ = list(set.intersection(set(pipeline.keys()), set(combination)))
+            actives = [pipeline[key] != None for key in pipeline if key in combination_]
 
-    pipelines.extend(new_pipes)
-    # remove duplicates
-    while find_duplicates(pipelines) != -1:
-        pipelines.pop(find_duplicates(pipelines))
+            if sum(actives) > 1:
+                illegal_pipes.append(idx)  # Store the index of bad combination
+                for param in combination_:  # Generate substituting legal combinations
+                    if pipeline[param] != None:  # we need to make new pipe
+                        pipeline_ = pipeline.copy()
+                        for param_ in combination_:  # Set ALL conflicting parameters to None
+                            pipeline_[param_] = None
+                        pipeline_[param] = pipeline[param]  # Set current parameter back to original value
+                        pipelines_.append(pipeline_)
+
+        new_pipelines = [i for j, i in enumerate(pipelines) if j not in illegal_pipes]
+        new_pipelines.extend(pipelines_)
+        return new_pipelines
+
+    illegal_combinations = [['MSC', 'RNV', 'SNV', 'LSNV'],
+                            ['SMOOTH', 'SAVGOL']]
+
+    for combination in illegal_combinations:
+        pipelines = _remove_illegal_combination(pipelines, combination)
+        while find_duplicates(pipelines) != -1:
+            pipelines.pop(find_duplicates(pipelines))
 
     return pipelines
 
