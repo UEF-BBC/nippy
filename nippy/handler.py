@@ -332,8 +332,8 @@ def remove_incompatible_operations(pipelines):
                         pipelines_.append(pipeline_)
 
         new_pipelines = [i for j, i in enumerate(pipelines) if j not in illegal_pipes]
-        new_pipelines.extend(pipelines_)
-        return new_pipelines
+        # new_pipelines.extend(pipelines_)
+        return new_pipelines, pipelines_
 
     illegal_combinations = [['MSC', 'RNV', 'SNV', 'LSNV'],
                             ['SMOOTH', 'SAVGOL']]
