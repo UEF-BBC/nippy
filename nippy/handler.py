@@ -339,9 +339,12 @@ def remove_incompatible_operations(pipelines):
                             ['SMOOTH', 'SAVGOL']]
 
     for combination in illegal_combinations:
-        pipelines = _remove_illegal_combination(pipelines, combination)
-        while find_duplicates(pipelines) != -1:
-            pipelines.pop(find_duplicates(pipelines))
+        pipelines, new_pipes = _remove_illegal_combination(pipelines, combination)
+
+        pipelines.extend(new_pipes)
+        pipelines_set = {json.dumps(pipeline, sort_keys=True) for pipeline in pipelines}
+        pipelines = [json.loads(item) for item in pipelines_set]
+
 
     return pipelines
 
