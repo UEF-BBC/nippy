@@ -5,6 +5,7 @@
 
 import configparser
 import itertools
+import json
 
 
 # ------- SECTION-SPECIFIC PARSING FUNCTIONS --------
