@@ -1,6 +1,6 @@
 # CONFIGURATION: How to write the configuration file?
 
-_(Last updated: 14.11.2018)_
+_(Last updated: 20.11.2019)_
 
 Here you can find the syntax and a list of parameters for the different preprocessing operations currently included in `nippy`. Additional documentation can be found in the source code comments and docstrings.
 
