@@ -8,7 +8,7 @@ Configuration files in `nippy` use the venerable [INI-format](https://en.wikiped
 
 **Note:** In addition to method specific parameters, each preprocessing steps accepts `also_skip` parameter. `also_skip` is a boolean which generates an additional pipeline where the method in question is left out.
 
-Currently, the order in which the operations are carried out is static. For instance, if clipping is part of the pipeline being tested it will always performed as the first operation, followed by scatter correction and so on. We might make the order of operations a configurable parameter in the future. For now, however, if you want to change the order, you can do so by modifying the `run_pipeline` function of `nippy.py`:
+**Note:** Currently, the order in which the operations are carried out is static. For instance, if clipping is part of the pipeline being tested it will always performed as the first operation, followed by scatter correction and so on. We might make the order of operations a configurable parameter in the future. For now, however, if you want to change the order, you can do so by modifying the `run_pipeline` function of `nippy.py`:
 
 ```python
 def run_pipeline(wavelength_, spectra_, pipeline):
