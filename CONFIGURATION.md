@@ -11,7 +11,7 @@ Configuration files in `nippy` use the venerable [INI-format](https://en.wikiped
 **Note:** Currently, the order in which the operations are carried out is static. For instance, if clipping is part of the pipeline being tested it will always performed as the first operation, followed by scatter correction and so on. We might make the order of operations a configurable parameter in the future. For now, however, if you want to change the order, you can do so by modifying the `run_pipeline` function of `nippy.py`:
 
 ```python
-def run_pipeline(wavelength_, spectra_, pipeline):
+def run_pipeline(wavelength_, spectra_, pipeline):  # CLIP performed always before SNV/RNV
 
         if 'CLIP' in pipeline.keys() and pipeline['CLIP'] != None:
             wavelength_, spectra_ = clip(wavelength_, spectra_, **pipeline['CLIP'])
@@ -21,6 +21,23 @@ def run_pipeline(wavelength_, spectra_, pipeline):
 
         if 'RNV' in pipeline.keys() and pipeline['RNV'] != None:
             spectra_ = rnv(spectra_, **pipeline['RNV'])
+ 
+ 
+ ....
+ 
+ 
+def run_pipeline(wavelength_, spectra_, pipeline):  # SNV/RNV performed always before CLIP
+        
+        if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
+            spectra_ = snv(spectra_, **pipeline['SNV'])
+
+        if 'RNV' in pipeline.keys() and pipeline['RNV'] != None:
+            spectra_ = rnv(spectra_, **pipeline['RNV'])
+        
+        if 'CLIP' in pipeline.keys() and pipeline['CLIP'] != None:
+            wavelength_, spectra_ = clip(wavelength_, spectra_, **pipeline['CLIP'])
+
+        
 ```
 
 ## CLIP
