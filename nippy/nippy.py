@@ -57,7 +57,7 @@ def baseline(spectra):
         spectra <numpy.ndarray>: Mean-centered NIRS data matrix
     """
 
-    return (spectra - np.mean(spectra, axis=0)
+    return spectra - np.mean(spectra, axis=0)
 
 def snv(spectra):
     """ Perform scatter correction using the standard normal variate.
