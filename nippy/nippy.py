@@ -47,6 +47,18 @@ class Preprocessor(object):
 
 
 # PREPROCESSING FUNCTIONS
+def baseline(spectra):
+    """ Removes baseline (mean) from each spectrum.
+
+    Args:
+        spectra <numpy.ndarray>: NIRS data matrix.
+
+    Returns:
+        spectra <numpy.ndarray>: Mean-centered NIRS data matrix
+    """
+
+    return (spectra - np.mean(spectra, axis=0)
+
 def snv(spectra):
     """ Perform scatter correction using the standard normal variate.
 
@@ -335,6 +347,9 @@ def run_pipeline(wavelength_, spectra_, pipeline):
 
         if 'CLIP' in pipeline.keys() and pipeline['CLIP'] != None:
             wavelength_, spectra_ = clip(wavelength_, spectra_, **pipeline['CLIP'])
+
+        if 'BASELINE' in pipeline.keys() and pipeline['BASELINE'] != None:
+            spectra_ = baseline(spectra_, **pipeline['SNV'])
 
         if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
             spectra_ = snv(spectra_, **pipeline['SNV'])

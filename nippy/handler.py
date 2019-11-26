@@ -237,6 +237,8 @@ def parse_section(config, config_type):
 
     if config_type == 'SAVGOL':
         config = parse_savgol(config)
+    elif config_type == 'BASELINE':
+        config = {}
     elif config_type == 'SNV':
         config = {}
     elif config_type == 'RNV':
@@ -336,7 +338,7 @@ def remove_incompatible_operations(pipelines):
         # new_pipelines.extend(pipelines_)
         return new_pipelines, pipelines_
 
-    illegal_combinations = [['MSC', 'RNV', 'SNV', 'LSNV'],
+    illegal_combinations = [['BASELINE', 'MSC', 'RNV', 'SNV', 'LSNV'],
                             ['SMOOTH', 'SAVGOL']]
 
     for combination in illegal_combinations:
@@ -363,7 +365,7 @@ def read_configuration(file_path):
 
     # Parse predefined configuration sections
     config = {}
-    for part in ['SAVGOL', 'TRIM', 'SNV', 'RNV', 'LSNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
+    for part in ['SAVGOL', 'TRIM', 'BASELINE', 'SNV', 'RNV', 'LSNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
         if part in parser:
             config[part] = parse_section(dict(parser[part]), part)
 
