@@ -349,7 +349,7 @@ def run_pipeline(wavelength_, spectra_, pipeline):
             wavelength_, spectra_ = clip(wavelength_, spectra_, **pipeline['CLIP'])
 
         if 'BASELINE' in pipeline.keys() and pipeline['BASELINE'] != None:
-            spectra_ = baseline(spectra_, **pipeline['SNV'])
+            spectra_ = baseline(spectra_, **pipeline['BASELINE'])
 
         if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
             spectra_ = snv(spectra_, **pipeline['SNV'])
