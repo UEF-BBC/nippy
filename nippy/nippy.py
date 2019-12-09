@@ -234,19 +234,19 @@ def emsc(wave, spectra, remove_mean=False):
     if remove_mean:
         spectra = scale(spectra, with_std=False, axis=0)
 
-    c = .5 * (wave[0] + wave[-1])
-    m = 2 / (wave[0] - wave[-1])
+    p1 = .5 * (wave[0] + wave[-1])
+    p2 = 2 / (wave[0] - wave[-1])
 
     # Compute model terms
     model = np.ones((wave.size, 4))
-    model[:, 1] = m * (wave[0] - wave) - 1
-    model[:, 2] = (m ** 2) * ((wave - c) ** 2)
+    model[:, 1] = p2 * (wave[0] - wave) - 1
+    model[:, 2] = (p2 ** 2) * ((wave - p1) ** 2)
     model[:, 3] = np.mean(spectra, axis=1)
 
-    # # Solve correction parameters
+    # Solve correction parameters
     params = np.linalg.lstsq(model, spectra)[0].T
 
-    # # Apply correction
+    # Apply correction
     spectra = spectra - np.dot(params[:, :-1], model[:, :-1].T).T
     spectra = np.multiply(spectra, 1 / np.repeat(params[:, -1].reshape(1, -1), spectra.shape[0], axis=0))
 
