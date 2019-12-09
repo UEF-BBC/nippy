@@ -397,7 +397,7 @@ def run_pipeline(wavelength_, spectra_, pipeline):
             spectra_ = msc(spectra_)
 
         if 'EMSC' in pipeline.keys() and pipeline['EMSC'] != None:
-            spectra_ = msc(wavelength_, spectra_)
+            spectra_ = emsc(wavelength_, spectra_)
 
         if 'NORML' in pipeline.keys() and pipeline['NORML'] != None:
             spectra_ = norml(spectra_, **pipeline['NORML'])
