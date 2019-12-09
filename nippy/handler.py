@@ -58,6 +58,22 @@ def parse_norml(config):
     return config
 
 
+def parse_emsc(config):
+    """ Parse arguments for Normalization.
+
+    Args:
+        config <dict>: dictionary of configuration options for norml.
+    Returns:
+        config <dict>: dictionary of configuration options with parsed values.
+
+    """
+
+    for key in config:
+        config[key] = _parse_list(config[key], dtype=bool)
+
+    return config
+
+
 def parse_clip(config):
     """ Parse arguments for Clipping.
 
@@ -251,6 +267,8 @@ def parse_section(config, config_type):
         config = parse_detrend(config)
     elif config_type == 'MSC':
         config = {}
+    elif config_type == 'EMSC':
+        config = parse_emsc(config)
     elif config_type == 'NORML':
         config = parse_norml(config)
     elif config_type == 'CLIP':
@@ -338,7 +356,7 @@ def remove_incompatible_operations(pipelines):
         # new_pipelines.extend(pipelines_)
         return new_pipelines, pipelines_
 
-    illegal_combinations = [['BASELINE', 'MSC', 'RNV', 'SNV', 'LSNV'],
+    illegal_combinations = [['BASELINE', 'MSC', 'EMSC', 'RNV', 'SNV', 'LSNV'],
                             ['SMOOTH', 'SAVGOL']]
 
     for combination in illegal_combinations:
@@ -365,7 +383,7 @@ def read_configuration(file_path):
 
     # Parse predefined configuration sections
     config = {}
-    for part in ['SAVGOL', 'TRIM', 'BASELINE', 'SNV', 'RNV', 'LSNV', 'DETREND', 'MSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
+    for part in ['SAVGOL', 'TRIM', 'BASELINE', 'SNV', 'RNV', 'LSNV', 'DETREND', 'MSC', 'EMSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
         if part in parser:
             config[part] = parse_section(dict(parser[part]), part)
 

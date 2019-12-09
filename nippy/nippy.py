@@ -59,6 +59,7 @@ def baseline(spectra):
 
     return spectra - np.mean(spectra, axis=0)
 
+
 def snv(spectra):
     """ Perform scatter correction using the standard normal variate.
 
@@ -220,6 +221,38 @@ def msc(spectra):
     return spectra
 
 
+def emsc(wave, spectra, remove_mean=False):
+    """ Performs (basic) extended multiplicative scatter correction to the mean.
+
+    Args:
+        spectra <numpy.ndarray>: NIRS data matrix.
+
+    Returns:
+        spectra <numpy.ndarray>: Scatter corrected NIR spectra.
+    """
+
+    if remove_mean:
+        spectra = scale(spectra, with_std=False, axis=0)
+
+    c = .5 * (wave[0] + wave[-1])
+    m = 2 / (wave[0] - wave[-1])
+
+    # Compute model terms
+    model = np.ones((wave.size, 4))
+    model[:, 1] = m * (wave[0] - wave) - 1
+    model[:, 2] = (m ** 2) * ((wave - c) ** 2)
+    model[:, 3] = np.mean(spectra, axis=1)
+
+    # # Solve correction parameters
+    params = np.linalg.lstsq(model, spectra)[0].T
+
+    # # Apply correction
+    spectra = spectra - np.dot(params[:, :-1], model[:, :-1].T).T
+    spectra = np.multiply(spectra, 1 / np.repeat(params[:, -1].reshape(1, -1), spectra.shape[0], axis=0))
+
+    return spectra
+
+
 def clip(wavelength, spectra, threshold, substitute=None):
     """ Removes or substitutes values above the given threshold.
 
@@ -362,6 +395,9 @@ def run_pipeline(wavelength_, spectra_, pipeline):
 
         if 'MSC' in pipeline.keys() and pipeline['MSC'] != None:
             spectra_ = msc(spectra_)
+
+        if 'EMSC' in pipeline.keys() and pipeline['EMSC'] != None:
+            spectra_ = msc(wavelength_, spectra_)
 
         if 'NORML' in pipeline.keys() and pipeline['NORML'] != None:
             spectra_ = norml(spectra_, **pipeline['NORML'])
