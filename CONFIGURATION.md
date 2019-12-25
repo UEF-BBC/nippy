@@ -1,12 +1,44 @@
 # CONFIGURATION: How to write the configuration file?
 
-_(Last updated: 14.11.2018)_
+_(Last updated: 20.11.2019)_
 
 Here you can find the syntax and a list of parameters for the different preprocessing operations currently included in `nippy`. Additional documentation can be found in the source code comments and docstrings.
 
 Configuration files in `nippy` use the venerable [INI-format](https://en.wikipedia.org/wiki/INI_file). Each preprocessing option is entered into the configuration file as a section and the iterable parameters for that method are given as key-value pairs. Description of each preprocessing method and related parameters are given below.
 
 **Note:** In addition to method specific parameters, each preprocessing steps accepts `also_skip` parameter. `also_skip` is a boolean which generates an additional pipeline where the method in question is left out.
+
+**Note:** Currently, the order in which the operations are carried out is static. For instance, if clipping is part of the pipeline being tested it will always performed as the first operation, followed by scatter correction and so on. We might make the order of operations a configurable parameter in the future. For now, however, if you want to change the order, you can do so by modifying the `run_pipeline` function of `nippy.py`:
+
+```python
+def run_pipeline(wavelength_, spectra_, pipeline):  # CLIP performed always before SNV/RNV
+
+        if 'CLIP' in pipeline.keys() and pipeline['CLIP'] != None:
+            wavelength_, spectra_ = clip(wavelength_, spectra_, **pipeline['CLIP'])
+
+        if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
+            spectra_ = snv(spectra_, **pipeline['SNV'])
+
+        if 'RNV' in pipeline.keys() and pipeline['RNV'] != None:
+            spectra_ = rnv(spectra_, **pipeline['RNV'])
+ 
+ 
+ ....
+ 
+ 
+def run_pipeline(wavelength_, spectra_, pipeline):  # SNV/RNV performed always before CLIP
+        
+        if 'SNV' in pipeline.keys() and pipeline['SNV'] != None:
+            spectra_ = snv(spectra_, **pipeline['SNV'])
+
+        if 'RNV' in pipeline.keys() and pipeline['RNV'] != None:
+            spectra_ = rnv(spectra_, **pipeline['RNV'])
+        
+        if 'CLIP' in pipeline.keys() and pipeline['CLIP'] != None:
+            wavelength_, spectra_ = clip(wavelength_, spectra_, **pipeline['CLIP'])
+
+        
+```
 
 ## CLIP
 Clipping removes values from the spectra that exceed the user given threshold. 
