@@ -10,5 +10,5 @@ setup(name='nippy',
       package_dir={'nippy': 'nippy'},
       include_package_data=False,
       url='https://github.com/uef-bbc/nippy',
-      install_requires=['numpy>=1.13.3', 'scipy>=0.19.1', 'sklearn>=0.0']
+      install_requires=['numpy>=1.13.3', 'scipy>=0.19.1', 'scikit-learn>=0.20.0']
       )
