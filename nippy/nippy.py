@@ -424,7 +424,7 @@ def run_pipeline(wavelength_, spectra_, pipeline):
         return wavelength_, spectra_
 
 
-def nippy(wavelength, spectra, pipelines):
+def run_nippy(wavelength, spectra, pipelines):
     """ Main processing script of nippy. Applies operations specified in the 'pipelines' parameter to the given spectra.
 
     Args:
