@@ -2,7 +2,7 @@
 # functions (like data export).
 #
 # jtorniainen, ioafara // Department of Applied Physics, University of Eastern Finland
-# 2018, MIT License
+# 2020, MIT License
 
 
 import scipy.signal
@@ -13,6 +13,200 @@ from sklearn.preprocessing import normalize, scale
 from . import handler
 import pickle
 import os
+
+from scipy import sparse
+from sklearn.base import TransformerMixin, BaseEstimator
+from sklearn.utils.validation import FLOAT_DTYPES
+
+
+class SavitzkyGolay(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, filter_win=11, poly_order=3, deriv_order=0, delta=1.0, copy=True):
+        self.copy = copy
+        self.filter_win = filter_win
+        self.poly_order = poly_order
+        self.deriv_order = deriv_order
+        self.delta = delta
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+
+        # Make sure filter window length is odd
+        filter_win = self.filter_win
+        if self.filter_win % 2 == 0:
+            filter_win += 1
+
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = savgol(X.T, filter_win=filter_win, poly_order=self.poly_order, deriv_order=self.deriv_order, delta=self.delta).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
+class LocalStandardNormalVariate(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, num_windows=3, copy=True):
+        self.copy = copy
+
+        self.num_windows = num_windows
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = lsnv(X.T, num_windows=self.num_windows).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
+class Normalize(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, imin=0, imax=1, copy=True):
+        self.copy = copy
+        self.imin = imin
+        self.imax = imax
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = norml(X.T, imin=self.imin, imax=self.imax).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
+class Detrend(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, bp=0, copy=True):
+        self.copy = copy
+        self.bp = bp
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = detrend(X.T, bp=self.bp).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
+class MultipleScatterCorrection(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, copy=True):
+        self.copy = copy
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = msc(X.T).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
+class RobustNormalVariate(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, iqr1=75, iqr2=25, copy=True):
+        self.copy = copy
+
+        self.iqr1 = iqr1
+        self.iqr2 = iqr2
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = rnv(X.T, iqr=[self.iqr1, self.iqr2]).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
+class Baseline(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, copy=True):
+        self.copy = copy
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = baseline(X.T).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
+class StandardNormalVariate(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, copy=True):
+        self.copy = copy
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = snv(X.T).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
 
 
 class Preprocessor(object):
