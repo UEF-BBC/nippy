@@ -43,7 +43,7 @@ class SavitzkyGolay(TransformerMixin, BaseEstimator):
             filter_win += 1
 
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = savgol(X.T, filter_win=filter_win, poly_order=self.poly_order, deriv_order=self.deriv_order, delta=self.delta).T
         return X
 
@@ -67,7 +67,7 @@ class LocalStandardNormalVariate(TransformerMixin, BaseEstimator):
         if sparse.issparse(X):
             raise ValueError('Sparse matrices not supported!"')
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = lsnv(X.T, num_windows=self.num_windows).T
         return X
 
@@ -91,7 +91,7 @@ class Normalize(TransformerMixin, BaseEstimator):
         if sparse.issparse(X):
             raise ValueError('Sparse matrices not supported!"')
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = norml(X.T, imin=self.imin, imax=self.imax).T
         return X
 
@@ -114,7 +114,7 @@ class Detrend(TransformerMixin, BaseEstimator):
         if sparse.issparse(X):
             raise ValueError('Sparse matrices not supported!"')
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = detrend(X.T, bp=self.bp).T
         return X
 
@@ -136,7 +136,7 @@ class MultipleScatterCorrection(TransformerMixin, BaseEstimator):
         if sparse.issparse(X):
             raise ValueError('Sparse matrices not supported!"')
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = msc(X.T).T
         return X
 
@@ -161,7 +161,7 @@ class RobustNormalVariate(TransformerMixin, BaseEstimator):
         if sparse.issparse(X):
             raise ValueError('Sparse matrices not supported!"')
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = rnv(X.T, iqr=[self.iqr1, self.iqr2]).T
         return X
 
@@ -181,7 +181,7 @@ class Baseline(TransformerMixin, BaseEstimator):
 
     def transform(self, X, copy=None):
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = baseline(X.T).T
         return X
 
@@ -201,7 +201,7 @@ class StandardNormalVariate(TransformerMixin, BaseEstimator):
 
     def transform(self, X, copy=None):
         copy = copy if copy is not None else self.copy
-        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         X = snv(X.T).T
         return X
 
