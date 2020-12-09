@@ -4,6 +4,14 @@
 # jtorniainen, ioafara // Department of Applied Physics, University of Eastern Finland
 # 2020, MIT License
 
+from ConfigSpace.configuration_space import ConfigurationSpace
+from ConfigSpace.hyperparameters import UniformFloatHyperparameter, CategoricalHyperparameter
+from ConfigSpace.conditions import InCondition
+
+import autosklearn.pipeline.components.feature_preprocessing
+from autosklearn.pipeline.components.base import AutoSklearnPreprocessingAlgorithm
+from autosklearn.pipeline.constants import DENSE, SIGNED_DATA, UNSIGNED_DATA
+from autosklearn.util.common import check_none
 
 import scipy.signal
 import scipy.io as io
@@ -17,6 +25,73 @@ import os
 from scipy import sparse
 from sklearn.base import TransformerMixin, BaseEstimator
 from sklearn.utils.validation import FLOAT_DTYPES
+
+
+class SavitzkyGolay2(AutoSklearnPreprocessingAlgorithm):
+
+    def __init__(self, *, filter_win=11, poly_order=3, deriv_order=0, delta=1.0, copy=True):
+        self.copy = copy
+        self.filter_win = filter_win
+        self.poly_order = poly_order
+        self.deriv_order = deriv_order
+        self.delta = delta
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+
+        # Make sure filter window length is odd
+        filter_win = self.filter_win
+        if self.filter_win % 2 == 0:
+            filter_win += 1
+
+        copy = copy if copy is not None else self.copy
+        # X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        X = savgol(X.T, filter_win=filter_win, poly_order=self.poly_order, deriv_order=self.deriv_order, delta=self.delta).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+    @staticmethod
+    def get_properties(dataset_properties=None):
+        return {'shortname': 'savgol',
+                'name': 'Savitzky-Golay Filtering',
+                'handles_regression': True,
+                'handles_classification': True,
+                'handles_multiclass': True,
+                'handles_multilabel': True,
+                'handles_multioutput': True,
+                'is_deterministic': True,
+                'input': (DENSE, UNSIGNED_DATA, SIGNED_DATA),
+                'output': (DENSE, UNSIGNED_DATA, SIGNED_DATA)}
+
+    @staticmethod
+    def get_hyperparameter_search_space(dataset_properties=None):
+        cs = ConfigurationSpace()
+        # solver = CategoricalHyperparameter(
+            # name="solver", choices=['svd', 'lsqr', 'eigen'], default_value='svd'
+        # )
+        filter_win = UniformIntegerHyperparameter(name="filter_win", lower=7, upper=31, default_value=11)
+        poly_order = UniformIntegerHyperparameter(name="poly_order", lower=1, upper=5, default_value=3)
+        deriv_order = UniformIntegerHyperparameter(name="deriv_order", lower=0, upper=4, default_value=0)
+
+        # shrinkage = UniformFloatHyperparameter(
+            # name="shrinkage", lower=0.0, upper=1.0, default_value=0.5
+        # )
+        # tol = UniformFloatHyperparameter(
+            # name="tol", lower=0.0001, upper=1, default_value=0.0001
+        # )
+        # cs.add_hyperparameters([solver, shrinkage, tol])
+        cs.add_hyperparameters([filter_win, poly_order, deriv_order])
+        # shrinkage_condition = InCondition(shrinkage, solver, ['lsqr', 'eigen'])  # TODO: Maybe add conditions for filter win and such
+        # cs.add_condition(shrinkage_condition)
+        return cs
 
 
 class SavitzkyGolay(TransformerMixin, BaseEstimator):
