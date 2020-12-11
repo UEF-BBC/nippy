@@ -5,7 +5,7 @@
 # 2020, MIT License
 
 from ConfigSpace.configuration_space import ConfigurationSpace
-from ConfigSpace.hyperparameters import UniformFloatHyperparameter, CategoricalHyperparameter
+from ConfigSpace.hyperparameters import UniformFloatHyperparameter, CategoricalHyperparameter, UniformIntegerHyperparameter
 from ConfigSpace.conditions import InCondition
 
 import autosklearn.pipeline.components.feature_preprocessing
