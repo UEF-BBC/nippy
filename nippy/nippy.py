@@ -29,7 +29,7 @@ from sklearn.utils.validation import FLOAT_DTYPES
 
 class SavitzkyGolay2(AutoSklearnPreprocessingAlgorithm):
 
-    def __init__(self, *, filter_win=11, poly_order=3, deriv_order=0, delta=1.0, copy=True):
+    def __init__(self, *, filter_win=11, poly_order=3, deriv_order=0, delta=1.0, copy=True, random_state=None):
         self.copy = copy
         self.filter_win = filter_win
         self.poly_order = poly_order
