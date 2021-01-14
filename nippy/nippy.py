@@ -99,6 +99,24 @@ class Normalize(TransformerMixin, BaseEstimator):
         return {'allow_nan': True}
 
 
+class NoPreprocessing(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, copy=True):
+        self.copy = copy
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        return X
+
+
 class Detrend(TransformerMixin, BaseEstimator):
 
     def __init__(self, *, bp=0, copy=True):
