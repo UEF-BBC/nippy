@@ -179,6 +179,25 @@ def parse_smooth(config):
     return config
 
 
+def parse_derivate(config):
+    """ Parse arguments for moving average filtering.
+
+    Args:
+        config <dict>: dictionary of configuration options for derivate.
+    Returns:
+        config <dict>: dictionary of configuration options with parsed values.
+
+    """
+
+    if 'order' in config.keys():
+        config['order'] = _parse_list(config['order'], dtype=int)
+
+    if 'delta' in config.keys():
+        config['delta'] = _parse_list(config['delta'], dtype=int)
+
+    return config
+
+
 # ------- PARSING UTILITY FUNCTIONS --------
 def _parse_list_of_lists(string, delimiter_elements=',', delimiter_lists=':', delimiter_pipelines=';', dtype=float):
     """ Parses a string that contains single or multiple lists.
@@ -277,6 +296,8 @@ def parse_section(config, config_type):
         config = parse_smooth(config)
     elif config_type == 'RESAMPLE':
         config = parse_resample(config)
+    elif config_type == 'DERIVATE':
+        config = parse_derivate(config)
     else:
         raise TypeError('Preprocessing option "{}" not recognized!'.format(config_type))
 
@@ -383,7 +404,7 @@ def read_configuration(file_path):
 
     # Parse predefined configuration sections
     config = {}
-    for part in ['SAVGOL', 'TRIM', 'BASELINE', 'SNV', 'RNV', 'LSNV', 'DETREND', 'MSC', 'EMSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE']:
+    for part in ['SAVGOL', 'TRIM', 'BASELINE', 'SNV', 'RNV', 'LSNV', 'DETREND', 'MSC', 'EMSC', 'NORML', 'CLIP', 'SMOOTH', 'RESAMPLE', 'DERIVATE']:
         if part in parser:
             config[part] = parse_section(dict(parser[part]), part)
 
