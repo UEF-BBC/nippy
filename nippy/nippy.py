@@ -409,7 +409,7 @@ def run_pipeline(wavelength_, spectra_, pipeline):
             spectra_ = smooth(spectra_, **pipeline['SMOOTH'])
 
         if 'DERIVATE' in pipeline.keys() and pipeline['DERIVATE'] != None:
-            wavelength_, spectra_ = derivate(spectra_, **pipeline['DERIVATE'])
+            spectra_ = derivate(spectra_, **pipeline['DERIVATE'])
 
         if 'DETREND' in pipeline.keys() and pipeline['DETREND'] != None:
             spectra_ = detrend(spectra_, **pipeline['DETREND'])
