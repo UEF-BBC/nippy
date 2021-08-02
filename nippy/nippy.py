@@ -75,6 +75,32 @@ class LocalStandardNormalVariate(TransformerMixin, BaseEstimator):
         return {'allow_nan': True}
 
 
+class Trim(TransformerMixin, BaseEstimator):
+
+    def __init__(self, *, wavelength, bins, copy=True):
+        self.copy = copy
+
+        self.bins = bins
+        self.wavelength = wavelength
+
+    def fit(self, X, y=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        return self
+
+    def transform(self, X, copy=None):
+        if sparse.issparse(X):
+            raise ValueError('Sparse matrices not supported!"')
+        copy = copy if copy is not None else self.copy
+        X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
+        w_ = np.zeros(X.shape[1])  # Dummy
+        w_, X = trim(self.wavelength, X.T, bins=self.bins).T
+        return X
+
+    def _more_tags(self):
+        return {'allow_nan': True}
+
+
 class Normalize(TransformerMixin, BaseEstimator):
 
     def __init__(self, *, imin=0, imax=1, copy=True):
