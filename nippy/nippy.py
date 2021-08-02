@@ -77,7 +77,7 @@ class LocalStandardNormalVariate(TransformerMixin, BaseEstimator):
 
 class Trim(TransformerMixin, BaseEstimator):
 
-    def __init__(self, *, wavelength, bins, copy=True):
+    def __init__(self, *, wavelength, bins=[-np.inf, np.inf], copy=True):
         self.copy = copy
 
         self.bins = bins
