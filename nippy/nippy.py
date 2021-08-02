@@ -94,7 +94,8 @@ class Trim(TransformerMixin, BaseEstimator):
         copy = copy if copy is not None else self.copy
         X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
         w_ = np.zeros(X.shape[1])  # Dummy
-        w_, X = trim(self.wavelength, X.T, bins=self.bins).T
+        w_, X = trim(self.wavelength, X.T, bins=self.bins)
+        X = X.T
         return X
 
     def _more_tags(self):
