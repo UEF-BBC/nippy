@@ -95,9 +95,16 @@ class Trim(TransformerMixin, BaseEstimator):
             raise ValueError('Sparse matrices not supported!"')
         copy = copy if copy is not None else self.copy
         X = self._validate_data(X, reset=True, accept_sparse='csr', copy=copy, estimator=self, dtype=FLOAT_DTYPES, force_all_finite='allow-nan')
-        w_ = np.zeros(X.shape[1])  # Dummy
-        w_, X = trim(self.wavelength, X.T, bins=self.bins)
-        X = X.T
+
+        # We are going to check if Trim has been run previously and if so then pass
+        # This is a limitation posed by TPOT for which there currently is no good fix.
+        if X.shape[1] == self.wavelength.size:
+            w_ = np.zeros(X.shape[1])  # Dummy
+            w_, X = trim(self.wavelength.copy(), X.T, bins=self.bins)
+            X = X.T
+        else:
+            print('Data already trimmed once! Skipping step...')
+
         return X
 
     def _more_tags(self):
