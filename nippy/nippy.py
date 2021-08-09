@@ -81,6 +81,8 @@ class Trim(TransformerMixin, BaseEstimator):
         self.copy = copy
 
         self.bins = bins
+        if type(wavelength) == list:
+            wavelength = np.array(wavelength)
         self.wavelength = wavelength
 
     def fit(self, X, y=None):
