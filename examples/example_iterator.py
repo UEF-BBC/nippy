@@ -10,7 +10,7 @@ import numpy as np
 if __name__ == '__main__':
 
     # 1. Load data
-    data = np.genfromtxt('nir_data.csv', delimiter=',')
+    data = np.genfromtxt('intern.csv', delimiter=',')
     wavelength = data[0, :]
     spectra = data[1:, :].T  # Rows = wavelength, Columns = samples
 
